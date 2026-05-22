@@ -1,8 +1,12 @@
 const express = require('express');
 require('dotenv').config();
+
+const database = require('./config/database');
+
+database.connect();
+
 // Bên Be dùng require để nhúng routes, còn fe dùng import
 const routes = require('./routes/client/index.route');
-
 
 const app = express();
 const port = process.env.PORT;
