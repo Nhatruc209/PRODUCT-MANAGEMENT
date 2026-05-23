@@ -1,3 +1,5 @@
+// [GET] /products
+
 // Xử lý logic
 const Product = require("../../models/product.model");
 
@@ -19,3 +21,4 @@ module.exports.index = async(req, res) => {
         products: products
     });
 }
+

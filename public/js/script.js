@@ -1,1 +1,16 @@
-console.log('Hello world');
+// Button Status
+const buttonStatus = document.querySelectorAll('[button-status]');
+if (buttonStatus.length > 0) {
+
+    buttonStatus.forEach(button => {
+        button.addEventListener('click', () => {
+            const status = button.getAttribute('button-status');
+            const url = new URL(window.location.href);
+            if (status) {
+                url.searchParams.set('status', status);
+            } else {
+                url.searchParams.delete('status');
+            }
+            window.location.href = url.toString();
+        });
+})}
