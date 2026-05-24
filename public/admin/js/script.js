@@ -49,8 +49,6 @@ if (buttonsPagination.length > 0) {
         button.addEventListener("click", () => {
             const page = button.getAttribute("button-pagination");
 
-            console.log(page);
-
             url.searchParams.set("page", page);
 
             window.location.href = url.href;
