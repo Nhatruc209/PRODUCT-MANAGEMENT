@@ -1,20 +1,75 @@
 extends ../../layouts/default.pug
-include ../../mixins/box-head.pug
+
 block main
-    .container.my-3
-        .row
-            .col-12
-                +box-head("Danh sách sản phẩm")
-        .row
-            each item in products 
-                .col-4.mb-3
-                    .product-item
-                        .inner-image
-                            img(src=item.thumbnail, 
-                            alt=item.title
-                            )
-                        .inner-content
-                            h3.inner-title #{item.title}
-                            .inner-price-new #{item.priceNew}$
-                            .inner-price-old #{item.price}$
-                            .inner-discount #{item.discountPercentage}%
+    .product-list-page
+        section.page-hero
+            .container
+                .page-intro
+                    span.section-kicker Boutique Edit
+                    h1.page-title Sản phẩm
+                    p Tìm những thiết kế nữ tính, tinh tế và dễ phối cho phong cách hằng ngày của bạn.
+
+        .container
+            form.product-filter(action="/products" method="GET")
+                .row
+                    .col-md-4.mb-3.mb-md-0
+                        input.form-control(type="text" name="keyword" value=keyword placeholder="Tìm sản phẩm")
+                    .col-md-3.mb-3.mb-md-0
+                        select.form-control(name="categoryId")
+                            option(value="") Tất cả danh mục
+                            each item in categories
+                                option(value=item._id selected=(categoryId === item._id.toString())) #{item.title}
+                    .col-md-3.mb-3.mb-md-0
+                        select.form-control(name="sortKey")
+                            option(value="" selected=(sortKey === "")) Sắp xếp mặc định
+                            option(value="price-asc" selected=(sortKey === "price-asc")) Giá tăng dần
+                            option(value="price-desc" selected=(sortKey === "price-desc")) Giá giảm dần
+                            option(value="newest" selected=(sortKey === "newest")) Mới nhất
+                            option(value="oldest" selected=(sortKey === "oldest")) Cũ nhất
+                            option(value="title-asc" selected=(sortKey === "title-asc")) Tên A-Z
+                            option(value="title-desc" selected=(sortKey === "title-desc")) Tên Z-A
+                    .col-md-2
+                        button.btn.btn-dark.btn-block(type="submit") Lọc
+
+            .row.product-grid
+                if products.length > 0
+                    each item in products
+                        .col-12.col-sm-6.col-lg-3.mb-4
+                            .product-card
+                                a.product-card-image(href=`/products/detail/${item._id}`)
+                                    if item.thumbnail
+                                        img(src=item.thumbnail alt=item.title loading="lazy")
+                                    else
+                                        .product-placeholder Chưa có ảnh
+                                    .product-badges
+                                        if item.discountPercentage > 0
+                                            span.product-sale -#{item.discountPercentage}%
+                                        if item.isNew
+                                            span.product-new Mới
+                                .product-card-body
+                                    h3
+                                        a(href=`/products/detail/${item._id}`) #{item.title}
+                                    .product-price
+                                        span.price-new #{`${(Number(item.priceNew) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                        if item.discountPercentage > 0
+                                            span.price-old #{`${(Number(item.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                    .product-actions
+                                        a.product-detail-button(href=`/products/detail/${item._id}`) Chi tiết
+                                        form(action=`/cart/add/${item._id}` method="POST")
+                                            button.product-detail-button(type="submit") Thêm giỏ
+                else
+                    .col-12
+                        .empty-state Không tìm thấy sản phẩm phù hợp.
+
+            if pagination.totalPages > 1
+                nav.product-pagination
+                    ul.pagination.justify-content-center
+                        if pagination.currentPage > 1
+                            li.page-item
+                                a.page-link(href=buildQueryUrl(pagination.currentPage - 1)) Trước
+                        - for (let i = 1; i <= pagination.totalPages; i++)
+                            li(class=`page-item ${pagination.currentPage === i ? "active" : ""}`)
+                                a.page-link(href=buildQueryUrl(i)) #{i}
+                        if pagination.currentPage < pagination.totalPages
+                            li.page-item
+                                a.page-link(href=buildQueryUrl(pagination.currentPage + 1)) Sau

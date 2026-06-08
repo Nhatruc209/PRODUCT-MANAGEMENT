@@ -1,0 +1,57 @@
+extends ../../layouts/default.pug
+
+block main
+    .admin-page-head
+        div
+            span.admin-page-kicker Product Studio
+            h1.admin-page-title Sửa sản phẩm
+            p.admin-page-desc Cập nhật thông tin sản phẩm mà không thay đổi dữ liệu nền.
+        a.btn.admin-btn-soft(href=`${prefixAdmin}/products`) Quay lại
+
+    .admin-form-card
+        form(action=`${prefixAdmin}/products/edit/${product._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+            .form-group
+                label(for="title") Tiêu đề
+                input#title.form-control(type="text" name="title" value=product.title required)
+
+            .form-group
+                label(for="description") Mô tả
+                textarea#description.form-control(name="description" rows="5") #{product.description}
+
+            .form-row
+                .form-group.col-md-4
+                    label(for="price") Giá (VNĐ)
+                    input#price.form-control(type="number" name="price" min="0" value=product.price)
+                .form-group.col-md-4
+                    label(for="discountPercentage") Phần trăm giảm giá
+                    input#discountPercentage.form-control(type="number" name="discountPercentage" min="0" max="100" value=product.discountPercentage)
+                .form-group.col-md-4
+                    label(for="stock") Số lượng tồn kho
+                    input#stock.form-control(type="number" name="stock" min="0" value=product.stock)
+
+            .form-row
+                .form-group.col-md-4
+                    label(for="categoryId") Danh mục
+                    select#categoryId.form-control(name="categoryId")
+                        option(value="") Chưa phân loại
+                        each item in categories
+                            option(value=item._id selected=(product.categoryId === item._id.toString())) #{item.title}
+                .form-group.col-md-4
+                    label(for="status") Trạng thái
+                    select#status.form-control(name="status")
+                        option(value="active" selected=(product.status === "active")) Hoạt động
+                        option(value="inactive" selected=(product.status === "inactive")) Dừng hoạt động
+                .form-group.col-md-4
+                    label(for="position") Vị trí
+                    input#position.form-control(type="number" name="position" min="1" value=product.position)
+
+            .form-group
+                label(for="thumbnail") Ảnh đại diện
+                if product.thumbnail
+                    .mb-3
+                        img.admin-thumb(src=product.thumbnail alt=product.title)
+                input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*")
+
+            .admin-action-group
+                button.btn.admin-btn-primary(type="submit") Cập nhật
+                a.btn.admin-btn-soft(href=`${prefixAdmin}/products`) Quay lại

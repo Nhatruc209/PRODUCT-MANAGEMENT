@@ -2,102 +2,113 @@ extends ../../layouts/default.pug
 include ../../mixins/filter-status.pug
 include ../../mixins/search.pug
 include ../../mixins/pagination.pug
-include ../../mixins/form-change-multi.pug
-block main
-    h1 Trang danh sách sản phẩm
-    .card.mb-3
-    .card-header Bộ lọc và Tìm kiếm
 
-    .card-body
-        .row
-            .col-6
-                +filter-status(filterStatus)
-            .col-6
+block main
+    .admin-page-head
+        div
+            span.admin-page-kicker Product Studio
+            h1.admin-page-title Quản lý sản phẩm
+            p.admin-page-desc Lưu sản phẩm ngăn nắp, dễ chỉnh sửa và dễ theo dõi tồn kho. ♥
+        a.btn.admin-btn-primary(href=`${prefixAdmin}/products/create`) + Thêm sản phẩm
+
+    .admin-filter.product-filter-panel
+        .row.align-items-center
+            .col-12.col-lg-7.mb-3.mb-lg-0
                 +search(keyword)
-    .card.mb-3
-        .card-header DANH SÁCH SẢN PHẨM
-        .card-body
-            +from-change-multi(`${prefixAdmin}/products/change-multi?_method=PATCH`)
-            
-            table(
-                class=".table.table-hover.table-sm"
-                checkbox-multi
+            .col-12.col-lg-5
+                +filter-status(filterStatus)
+
+    .admin-stat-grid.product-stat-grid
+        .admin-stat-card
+            .stat-icon ◇
+            span Sản phẩm đang kinh doanh
+            strong #{products.length}
+        .admin-stat-card
+            .stat-icon ▦
+            span Danh mục đang sử dụng
+            strong #{Object.keys(categoryMap || {}).length}
+        .admin-stat-card
+            .stat-icon !
+            span Tồn kho thấp
+            strong #{products.filter(item => Number(item.stock || 0) <= 5).length}
+        .admin-stat-card
+            .stat-icon ♡
+            span Sản phẩm có ưu đãi
+            strong #{products.filter(item => Number(item.discountPercentage || 0) > 0).length}
+
+    .admin-table-card
+        .admin-card-header
+            h2.admin-card-title Danh sách sản phẩm
+            form.admin-bulk-form(
+                action=`${prefixAdmin}/products/change-multi?_method=PATCH`
+                method="POST"
+                form-change-products
             )
+                select.form-control(name="type")
+                    option(value="delete-all") Xóa sản phẩm đã chọn
+                    option(value="active") Hoạt động
+                    option(value="inactive") Dừng hoạt động
+                    option(value="change-position") Thay đổi vị trí
+                input.form-control(type="hidden" name="ids")
+                button.btn.admin-btn-soft(type="submit") Áp dụng
+        .table-responsive
+            table.table(checkbox-multi)
                 thead
                     tr
-                        th 
+                        th
                             input(type="checkbox" name="checkall")
                         th STT
-                        th Hình ảnh
-                        th Tiêu đề
+                        th Ảnh
+                        th Tên sản phẩm
                         th Giá
+                        th Giảm giá
+                        th Danh mục
+                        th Tồn kho
+                        th Vị trí
                         th Trạng thái
                         th Hành động
 
                 tbody
-                    each item, index in products
+                    if products.length > 0
+                        each item, index in products
+                            tr
+                                td
+                                    input(type="checkbox" name="id" value=item._id)
+                                td #{pagination.skip + index + 1}
+                                td
+                                    if item.thumbnail
+                                        img.admin-thumb(src=item.thumbnail alt=item.title)
+                                    else
+                                        .admin-thumb.thumb-empty
+                                td
+                                    strong #{item.title}
+                                    small.d-block.text-muted #{item.createdAt ? item.createdAt.toLocaleDateString("vi-VN") : ""}
+                                td #{`${(Number(item.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                td
+                                    if item.discountPercentage > 0
+                                        span.admin-badge.discount-badge -#{item.discountPercentage}%
+                                    else
+                                        span.text-muted 0%
+                                td #{categoryMap[item.categoryId] || "Chưa phân loại"}
+                                td #{item.stock}
+                                td
+                                    input.form-control.form-control-sm.position-input(type="number" value=item.position min="0" position-product=item._id)
+                                td
+                                    if item.status === "active"
+                                        form(action=`${prefixAdmin}/products/change-status/inactive/${item._id}?_method=PATCH` method="POST")
+                                            button.admin-badge.status-active(type="submit") Hoạt động
+                                    else
+                                        form(action=`${prefixAdmin}/products/change-status/active/${item._id}?_method=PATCH` method="POST")
+                                            button.admin-badge.status-inactive(type="submit") Dừng hoạt động
+                                td
+                                    .admin-action-group
+                                        a.admin-icon-btn(href=`${prefixAdmin}/products/detail/${item._id}` title="Chi tiết") ◉
+                                        a.admin-icon-btn(href=`${prefixAdmin}/products/edit/${item._id}` title="Sửa") ✎
+                                        form.d-inline(action=`${prefixAdmin}/products/delete/${item._id}?_method=DELETE` method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')")
+                                            button.admin-icon-btn(type="submit" title="Xóa") ♡
+                    else
                         tr
-                            td 
-                                input(
-                                    type="checkbox"
-                                    name="id" 
-                                    value=item._id
-                                    )
-                            
-                            td #{index +1}
+                            td.text-center.text-muted(colspan="11") Không có sản phẩm
 
-                            td
-                                img(
-                                    src=item.thumbnail
-                                    alt=item.title
-                                    width="100px"
-                                    height="auto"
-                                )
-
-                            td #{item.title}
-                            td #{item.price} 
-
-                            td
-                                if(item.status === "active")
-                                    a(
-                                        href="javascript:;" 
-                                        data-status = item.status
-                                        data-id = item._id
-                                        button-change-status
-                                        class="badge badge-success"
-                                        ) Hoạt động
-                                else
-                                    a(
-                                        href="javascript:;" 
-                                        data-status = item.status
-                                        data-id = item._id
-                                        button-change-status
-
-                                        class="badge badge-success"
-                                        ) Dừng hoạt động
-
-                            td
-                                button(
-                                    class="btn btn-warning btn-sm"
-                                    data-id = item._id
-                                    button-edit
-                                    ) Sửa
-                                button(
-                                    class="btn btn-danger btn-sm ml-1"
-                                    data-id = item._id
-                                    button-delete
-                                ) Xóa
+        .admin-card-body
             +pagination(pagination)
-
-            form(
-                action=""
-                method="POST"
-                id="form-change-status"
-                data-path=`${prefixAdmin}/products/change-status`
-                )
-            form(
-                action=""
-                method="POST"
-                id="form-delete-item"
-                data-path=`${prefixAdmin}/products/delete`
-            )

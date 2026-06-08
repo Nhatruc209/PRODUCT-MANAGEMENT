@@ -1,0 +1,74 @@
+extends ../../layouts/default.pug
+
+block main
+    - const statusLabelMap = { pending: "Chờ xử lý", confirmed: "Đã xác nhận", shipping: "Đang giao", completed: "Hoàn thành", cancelled: "Đã hủy" }
+    - const statusClassMap = { pending: "status-pending", confirmed: "status-confirmed", shipping: "status-shipping", completed: "status-completed", cancelled: "status-cancelled" }
+
+    .admin-page-head
+        div
+            span.admin-page-kicker Order Studio
+            h1.admin-page-title Chi tiết đơn hàng
+            p.admin-page-desc Mã đơn: #{order._id}
+        a.btn.admin-btn-soft(href=`${prefixAdmin}/orders`) Quay lại
+
+    .order-detail-grid
+        .admin-card
+            .admin-card-header
+                h2.admin-card-title Thông tin khách hàng
+            .admin-card-body
+                .detail-row
+                    span Họ tên
+                    strong #{order.userInfo.fullName}
+                .detail-row
+                    span Số điện thoại
+                    strong #{order.userInfo.phone}
+                .detail-row
+                    span Địa chỉ
+                    strong #{order.userInfo.address}
+                .detail-row
+                    span Ghi chú
+                    strong #{order.userInfo.note || "Không có"}
+
+        .admin-card
+            .admin-card-header
+                h2.admin-card-title Trạng thái đơn
+            .admin-card-body
+                p.current-status
+                    span Hiện tại
+                    span(class=`admin-badge ${statusClassMap[order.status] || "status-pending"}`) #{statusLabelMap[order.status] || order.status}
+                .status-update-list
+                    each item in statusList
+                        - const label = statusLabelMap[item.value] || item.label
+                        form(action=`${prefixAdmin}/orders/change-status/${item.value}/${order._id}?_method=PATCH` method="POST")
+                            button.btn.btn-sm(type="submit" class=(order.status === item.value ? "admin-btn-primary" : "admin-btn-soft")) #{label}
+
+    .admin-table-card.mt-4
+        .admin-card-header
+            h2.admin-card-title Sản phẩm trong đơn
+        .table-responsive
+            table.table
+                thead
+                    tr
+                        th Sản phẩm
+                        th Giá
+                        th Giảm giá
+                        th Số lượng
+                        th Thành tiền
+                tbody
+                    each item in order.products
+                        - const priceNew = Math.round(item.price * (100 - item.discountPercentage) / 100)
+                        tr
+                            td
+                                .order-product-cell
+                                    if item.thumbnail
+                                        img.admin-thumb-sm(src=item.thumbnail alt=item.title)
+                                    strong #{item.title}
+                            td #{`${(Number(item.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+                            td
+                                span.admin-badge.discount-badge #{item.discountPercentage}%
+                            td #{item.quantity}
+                            td #{`${(Number(priceNew * item.quantity) || 0).toLocaleString("vi-VN")} VNĐ`}
+                tfoot
+                    tr
+                        th.text-right(colspan="4") Tổng tiền
+                        th #{`${(Number(order.totalPrice) || 0).toLocaleString("vi-VN")} VNĐ`}

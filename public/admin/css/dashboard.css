@@ -1,0 +1,129 @@
+.admin-date-pill,
+.admin-chip {
+    border: 1px solid var(--admin-border);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--admin-muted);
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.62fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.dashboard-bottom-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.revenue-chart {
+    height: 300px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 18px;
+    align-items: end;
+    border-left: 1px solid var(--admin-border);
+    border-bottom: 1px solid var(--admin-border);
+    padding: 22px 10px 0 22px;
+}
+
+.revenue-bar {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.revenue-bar span {
+    color: var(--admin-brown);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.revenue-bar i {
+    width: min(58px, 100%);
+    height: var(--height);
+    min-height: 32px;
+    display: block;
+    border-radius: 14px 14px 4px 4px;
+    background: linear-gradient(180deg, #c7ad9f, var(--admin-rose));
+    box-shadow: 0 12px 24px rgba(111, 85, 72, 0.16);
+}
+
+.revenue-bar small {
+    color: var(--admin-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.overview-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: 16px;
+    background: var(--admin-cream);
+    color: var(--admin-brown);
+    margin-bottom: 10px;
+    padding: 12px 14px;
+}
+
+.overview-row.pending {
+    background: #fff1da;
+}
+
+.overview-row.cancel {
+    background: #eee7e2;
+}
+
+.overview-row span {
+    color: var(--admin-muted);
+    font-weight: 700;
+}
+
+.overview-row strong {
+    color: var(--admin-brown);
+}
+
+.section-link {
+    color: var(--admin-rose-dark);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.soft-empty {
+    border: 1px dashed var(--admin-border);
+    border-radius: 18px;
+    background: var(--admin-cream);
+    color: var(--admin-muted);
+    padding: 24px;
+}
+
+@media (max-width: 991.98px) {
+    .dashboard-grid,
+    .dashboard-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .revenue-chart {
+        gap: 10px;
+        padding-left: 12px;
+    }
+
+    .revenue-bar span {
+        display: none;
+    }
+}

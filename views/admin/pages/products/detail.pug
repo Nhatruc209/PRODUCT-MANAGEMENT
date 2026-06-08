@@ -1,0 +1,59 @@
+extends ../../layouts/default.pug
+
+block main
+    .admin-page-head
+        div
+            span.admin-page-kicker Product Studio
+            h1.admin-page-title Chi tiết sản phẩm
+            p.admin-page-desc Xem nhanh thông tin sản phẩm trong kho.
+        a.btn.admin-btn-soft(href=`${prefixAdmin}/products`) Quay lại
+
+    .product-detail-admin
+        .admin-card.product-preview-card
+            .admin-card-body
+                if product.thumbnail
+                    img.product-preview-image(src=product.thumbnail alt=product.title)
+                else
+                    .soft-empty Chưa có ảnh sản phẩm
+        .admin-card
+            .admin-card-header
+                h2.admin-card-title #{product.title}
+            .admin-card-body
+                table.table.detail-table
+                    tbody
+                        tr
+                            th Mô tả
+                            td #{product.description || "Không có mô tả"}
+                        tr
+                            th Giá
+                            td #{`${(Number(product.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        tr
+                            th Giảm giá
+                            td
+                                span.admin-badge.discount-badge #{product.discountPercentage}%
+                        tr
+                            th Giá sau giảm
+                            td #{`${(Number(product.priceNew) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        tr
+                            th Tồn kho
+                            td #{product.stock}
+                        tr
+                            th Trạng thái
+                            td
+                                if product.status === "active"
+                                    span.admin-badge.status-active Hoạt động
+                                else
+                                    span.admin-badge.status-inactive Dừng hoạt động
+                        tr
+                            th Vị trí
+                            td #{product.position}
+                        tr
+                            th Ngày tạo
+                            td #{product.createdAt ? product.createdAt.toLocaleString("vi-VN") : ""}
+                        tr
+                            th Ngày cập nhật
+                            td #{product.updatedAt ? product.updatedAt.toLocaleString("vi-VN") : ""}
+
+                .admin-action-group.mt-3
+                    a.btn.admin-btn-primary(href=`${prefixAdmin}/products/edit/${product._id}`) Sửa sản phẩm
+                    a.btn.admin-btn-soft(href=`${prefixAdmin}/products`) Quay lại danh sách

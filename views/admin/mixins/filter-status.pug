@@ -1,7 +1,9 @@
 mixin filter-status(filterStatus)
-    
-    each item in filterStatus
-        button(
-            class=`btn btn-sm ml-1 btn-outline-success ${item.class}`
-            button-status=item.status
-        ) #{item.name}
+    - const statusLabelMap = { "": "Tất cả", active: "Hoạt động", inactive: "Dừng hoạt động" }
+    .admin-status-filter
+        each item in filterStatus
+            button(
+                type="button"
+                class=`admin-filter-chip ${item.class}`
+                button-status=item.status
+            ) #{statusLabelMap[item.status] || item.name}

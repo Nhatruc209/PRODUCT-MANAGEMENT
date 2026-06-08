@@ -1,0 +1,34 @@
+extends ../../layouts/default.pug
+
+block main
+    .auth-page
+        .auth-card.auth-card-login
+            .auth-logo
+                img(src="/images/logo.svg" alt="Sera")
+            h1 Đăng nhập
+            p.auth-subtitle Chào mừng bạn quay lại với Sera
+            if messages.error
+                each message in messages.error
+                    .alert.alert-danger #{message}
+            if messages.success
+                each message in messages.success
+                    .alert.alert-success #{message}
+            form(action="/user/login" method="POST")
+                .form-group.auth-field
+                    span.auth-field-icon(aria-hidden="true") ♡
+                    input#email.form-control(type="email" name="email" placeholder="Email hoặc số điện thoại" required)
+                .form-group.auth-field
+                    span.auth-field-icon(aria-hidden="true") ◇
+                    input#password.form-control(type="password" name="password" placeholder="Mật khẩu" required)
+                    span.auth-eye(aria-hidden="true") ◉
+                .auth-options
+                    label.auth-check
+                        input(type="checkbox" name="remember")
+                        span Nhớ tôi
+                    a(href="#") Quên mật khẩu?
+                button.btn.btn-dark.btn-block(type="submit") Đăng nhập
+            .auth-divider
+                span hoặc
+            p.auth-switch
+                | Chưa có tài khoản?
+                a(href="/user/register")  Đăng ký

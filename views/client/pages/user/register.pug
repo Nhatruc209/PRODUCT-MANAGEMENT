@@ -1,0 +1,39 @@
+extends ../../layouts/default.pug
+
+block main
+    .auth-page
+        .auth-card.auth-card-register
+            .auth-logo
+                img(src="/images/logo.svg" alt="Sera")
+            h1 Đăng ký
+            p.auth-subtitle Tạo tài khoản để mua sắm cùng Sera
+            if messages.error
+                each message in messages.error
+                    .alert.alert-danger #{message}
+            form(action="/user/register" method="POST")
+                .form-group.auth-field
+                    span.auth-field-icon(aria-hidden="true") ♡
+                    input#fullName.form-control(type="text" name="fullName" placeholder="Họ và tên" required)
+                .form-group.auth-field
+                    span.auth-field-icon(aria-hidden="true") ✉
+                    input#email.form-control(type="email" name="email" placeholder="Email" required)
+                .form-group.auth-field
+                    span.auth-field-icon(aria-hidden="true") ☎
+                    input#phone.form-control(type="text" name="phone" placeholder="Số điện thoại")
+                .form-group.auth-field
+                    span.auth-field-icon(aria-hidden="true") ◇
+                    input#password.form-control(type="password" name="password" placeholder="Mật khẩu" required)
+                    span.auth-eye(aria-hidden="true") ◉
+                .form-group.auth-field
+                    span.auth-field-icon(aria-hidden="true") ◇
+                    input#confirmPassword.form-control(type="password" name="confirmPassword" placeholder="Xác nhận mật khẩu" required)
+                    span.auth-eye(aria-hidden="true") ◉
+                label.auth-check.auth-terms
+                    input(type="checkbox" name="terms")
+                    span Tôi đồng ý với điều khoản sử dụng
+                button.btn.btn-dark.btn-block(type="submit") Tạo tài khoản
+            .auth-divider
+                span hoặc
+            p.auth-switch
+                | Đã có tài khoản?
+                a(href="/user/login")  Đăng nhập

@@ -1,3 +1,167 @@
 extends ../../layouts/default
+
+mixin productCard(item)
+    .product-card
+        a.product-card-image(href=`/products/detail/${item._id}`)
+            if item.thumbnail
+                img(src=item.thumbnail alt=item.title loading="lazy")
+            else
+                .product-placeholder Chưa có ảnh
+            .product-badges
+                if item.discountPercentage > 0
+                    span.product-sale -#{item.discountPercentage}%
+                if item.isNew
+                    span.product-new Mới
+        .product-card-body
+            h3
+                a(href=`/products/detail/${item._id}`) #{item.title}
+            .product-price
+                span.price-new #{`${(Number(item.priceNew) || 0).toLocaleString("vi-VN")} VNĐ`}
+                if item.discountPercentage > 0
+                    span.price-old #{`${(Number(item.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+            a.product-detail-button(href=`/products/detail/${item._id}`)
+                span Xem chi tiết
+                span(aria-hidden="true") +
+
 block main
-        h1 Trang chủ
+    section.home-hero
+        .container
+            .hero-grid
+                .hero-copy
+                    span.hero-kicker New Collection
+                    h1 Thanh lịch mỗi ngày
+                    p Khám phá những thiết kế nữ tính, tinh tế và dễ mặc cho mọi khoảnh khắc.
+                    .hero-actions
+                        a.btn-hero-primary(href="/products") Mua sắm ngay
+                        a.btn-hero-secondary(href="/products?sortKey=newest") Xem bộ sưu tập
+                    .hero-benefits
+                        span Freeship từ 499K
+                        span Đổi trả dễ dàng
+                        span Thanh toán COD
+                .hero-visual
+                    .hero-image-card
+                        img(src="/uploads/products/1780239366712-vay_1.webp" alt="Sera New Collection")
+                    .hero-note
+                        span SERA
+                        small Soft tailoring for everyday elegance
+
+    section.home-section.new-arrivals
+        .container
+            .section-head.center
+                span.section-kicker Vừa lên kệ
+                h2 Sản phẩm mới
+                p Những thiết kế mới nhất được chọn lọc cho tủ đồ thanh lịch hằng ngày.
+            .row.product-grid
+                if productsNew.length > 0
+                    each item in productsNew
+                        .col-12.col-sm-6.col-lg-3.mb-4
+                            +productCard(item)
+                else
+                    .col-12
+                        .empty-state Chưa có sản phẩm mới.
+
+    section.collection-banner
+        .container
+            a.collection-panel(href="/products?sortKey=newest")
+                img(src="/uploads/products/1780226993805-set_1.webp" alt="Bộ sưu tập Sera")
+                .collection-overlay
+                    span.section-kicker Campaign
+                    h2 BỘ SƯU TẬP
+                    p Tối giản, mềm mại và giàu tính ứng dụng.
+                    span.collection-button Xem ngay
+
+    section.about-block
+        .container
+            .about-grid
+                .about-images
+                    img.about-image-main(src="/uploads/products/1780238152711-ao_2.webp" alt="Sera boutique detail")
+                    img.about-image-small(src="/uploads/products/1780238566358-quan_1.webp" alt="Sera styling")
+                .about-copy
+                    span.section-kicker About Sera
+                    h2 Sera — Thanh lịch và nữ tính
+                    p Những thiết kế được chọn lọc với tinh thần tối giản, mềm mại và dễ ứng dụng trong đời sống hằng ngày.
+                    a.section-link(href="/products") Khám phá thêm
+
+    section.home-section.category-section
+        .container
+            .section-head
+                div
+                    span.section-kicker Khám phá
+                    h2 Danh mục nổi bật
+                a.section-link(href="/products") Xem tất cả
+            .row.category-row
+                if categoriesFeatured.length > 0
+                    each item in categoriesFeatured
+                        .col-12.col-sm-6.col-lg-3.mb-4
+                            a.category-tile(href=item.href)
+                                img(src=item.image alt=item.title loading="lazy")
+                                span #{item.title}
+                else
+                    .col-12
+                        .empty-state Chưa có danh mục nổi bật.
+
+    section.home-section.featured-products
+        .container
+            .section-head
+                div
+                    span.section-kicker Được yêu thích
+                    h2 Sản phẩm nổi bật
+                a.section-link(href="/products") Xem tất cả
+            .row.product-grid
+                if productsFeatured.length > 0
+                    each item in productsFeatured
+                        .col-12.col-sm-6.col-lg-3.mb-4
+                            +productCard(item)
+                else
+                    .col-12
+                        .empty-state Chưa có sản phẩm nổi bật.
+
+    section.home-feature-band
+        .container
+            .feature-band-inner
+                .feature-band-content
+                    span.section-kicker Sale Special
+                    h2 Ưu đãi đặc biệt
+                    p Những thiết kế đang có ưu đãi được chọn lọc cho tủ đồ thanh lịch mỗi ngày.
+                    a.btn-hero-primary(href="/products?sortKey=price-asc") Xem tất cả ưu đãi
+                .feature-band-products
+                    if productsSale.length > 0
+                        each item in productsSale.slice(0, 2)
+                            .promo-product
+                                a.promo-image(href=`/products/detail/${item._id}`)
+                                    if item.thumbnail
+                                        img(src=item.thumbnail alt=item.title loading="lazy")
+                                    else
+                                        .product-placeholder Chưa có ảnh
+                                .promo-info
+                                    if item.discountPercentage > 0
+                                        span.product-sale -#{item.discountPercentage}%
+                                    h3
+                                        a(href=`/products/detail/${item._id}`) #{item.title}
+                                    .product-price
+                                        span.price-new #{`${(Number(item.priceNew) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                        if item.discountPercentage > 0
+                                            span.price-old #{`${(Number(item.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                    a.product-detail-button(href=`/products/detail/${item._id}`) Xem chi tiết
+                    else
+                        .empty-state Chưa có sản phẩm sale.
+
+    section.benefit-section
+        .container
+            .benefit-panel
+                .benefit-item
+                    .benefit-icon FS
+                    h3 Freeship
+                    p Miễn phí vận chuyển cho đơn từ 499K.
+                .benefit-item
+                    .benefit-icon RT
+                    h3 Đổi trả dễ dàng
+                    p Hỗ trợ đổi trả khi sản phẩm có lỗi.
+                .benefit-item
+                    .benefit-icon COD
+                    h3 Thanh toán COD
+                    p Nhận hàng rồi thanh toán tại nhà.
+                .benefit-item
+                    .benefit-icon SH
+                    h3 Bảo mật thông tin
+                    p Thông tin mua hàng luôn được bảo vệ.

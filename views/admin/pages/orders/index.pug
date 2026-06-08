@@ -1,0 +1,74 @@
+extends ../../layouts/default.pug
+
+block main
+    - const statusLabelMap = { pending: "Chờ xử lý", confirmed: "Đã xác nhận", shipping: "Đang giao", completed: "Hoàn thành", cancelled: "Đã hủy" }
+    - const statusClassMap = { pending: "status-pending", confirmed: "status-confirmed", shipping: "status-shipping", completed: "status-completed", cancelled: "status-cancelled" }
+
+    .admin-page-head
+        div
+            span.admin-page-kicker Order Studio
+            h1.admin-page-title Quản lý đơn hàng
+            p.admin-page-desc Theo dõi đơn hàng, cập nhật trạng thái giao hàng và kiểm tra thanh toán.
+        .admin-date-pill Hôm nay
+
+    .admin-stat-grid.order-stat-grid
+        .admin-stat-card
+            .stat-icon ◷
+            span Chờ xử lý
+            strong #{orders.filter(item => item.status === "pending").length}
+        .admin-stat-card
+            .stat-icon ⇢
+            span Đang giao
+            strong #{orders.filter(item => item.status === "shipping").length}
+        .admin-stat-card
+            .stat-icon ✓
+            span Hoàn thành
+            strong #{orders.filter(item => item.status === "completed").length}
+        .admin-stat-card
+            .stat-icon ×
+            span Đã hủy
+            strong #{orders.filter(item => item.status === "cancelled").length}
+
+    .admin-filter
+        form.admin-order-filter(action=`${prefixAdmin}/orders` method="GET")
+            select.form-control(name="status")
+                option(value="" selected=(status === "")) Tất cả trạng thái
+                each item in statusList
+                    - const label = statusLabelMap[item.value] || item.label
+                    option(value=item.value selected=(status === item.value)) #{label}
+            button.btn.admin-btn-primary(type="submit") Lọc
+
+    .admin-table-card
+        .admin-card-header
+            h2.admin-card-title Bảng đơn hàng
+        .table-responsive
+            table.table
+                thead
+                    tr
+                        th Mã đơn
+                        th Khách hàng
+                        th Số điện thoại
+                        th Tổng tiền
+                        th Trạng thái
+                        th Ngày đặt
+                        th Hành động
+                tbody
+                    if orders.length > 0
+                        each item in orders
+                            - const label = statusLabelMap[item.status] || item.status
+                            - const statusClass = statusClassMap[item.status] || "status-pending"
+                            tr
+                                td
+                                    strong ##{item._id.toString().slice(-6).toUpperCase()}
+                                    small.d-block.text-muted #{item._id}
+                                td #{item.userInfo.fullName}
+                                td #{item.userInfo.phone}
+                                td #{`${(Number(item.totalPrice) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                td
+                                    span(class=`admin-badge ${statusClass}`) #{label}
+                                td #{item.createdAt ? item.createdAt.toLocaleDateString("vi-VN") : ""}
+                                td
+                                    a.admin-icon-btn(href=`${prefixAdmin}/orders/detail/${item._id}` title="Chi tiết") ◉
+                    else
+                        tr
+                            td.text-center.text-muted(colspan="7") Không có đơn hàng

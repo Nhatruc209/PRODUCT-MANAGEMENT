@@ -1,0 +1,87 @@
+extends ../../layouts/default.pug
+
+block main
+    .product-detail-page
+        .container
+            .product-detail-grid
+                .product-detail-image
+                    if product.thumbnail
+                        img(src=product.thumbnail alt=product.title)
+                    else
+                        .product-detail-placeholder Chưa có ảnh sản phẩm
+
+                .product-detail-info
+                    a.back-link(href="/products") Quay lại danh sách
+                    span.section-kicker Sera Selection
+                    h1 #{product.title}
+
+                    .product-detail-price
+                        span.price-new #{`${(Number(product.priceNew) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        if product.discountPercentage > 0
+                            span.price-old #{`${(Number(product.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+                            span.detail-sale-badge -#{product.discountPercentage}%
+
+                    p.product-short-description #{product.description || "Sản phẩm thời trang dễ phối, phù hợp sử dụng hằng ngày."}
+
+                    .product-meta
+                        .meta-row
+                            strong Tình trạng
+                            if product.stock > 0
+                                span.stock-badge.in-stock Còn hàng
+                            else
+                                span.stock-badge.out-stock Hết hàng
+                        .meta-row
+                            strong Tồn kho
+                            span #{product.stock}
+
+                    form.product-buy-form(action=`/cart/add/${product._id}` method="POST")
+                        .form-group
+                            label Chọn size
+                            .size-options
+                                each size in ["S", "M", "L", "XL"]
+                                    label.size-option
+                                        input(type="radio" name="size" value=size checked=(size === "M"))
+                                        span #{size}
+
+                        .form-group
+                            label(for="quantity") Số lượng
+                            input#quantity.form-control.quantity-input(type="number" name="quantity" value="1" min="1" max=product.stock disabled=(product.stock <= 0))
+
+                        .product-detail-actions
+                            button.btn.btn-dark(type="submit" disabled=(product.stock <= 0)) Thêm vào giỏ
+                            button.btn.btn-outline-dark(type="submit" disabled=(product.stock <= 0)) Mua ngay
+
+            .product-description-box
+                h2 Mô tả chi tiết
+                p #{product.description || "Chưa có mô tả chi tiết cho sản phẩm này."}
+
+            .related-products
+                .section-head
+                    div
+                        span.section-kicker Có thể bạn thích
+                        h2 Sản phẩm liên quan
+                    a.section-link(href="/products") Xem tất cả
+                .row.product-grid
+                    if relatedProducts.length > 0
+                        each item in relatedProducts
+                            .col-12.col-sm-6.col-lg-3.mb-4
+                                .product-card
+                                    a.product-card-image(href=`/products/detail/${item._id}`)
+                                        if item.thumbnail
+                                            img(src=item.thumbnail alt=item.title loading="lazy")
+                                        else
+                                            .product-placeholder Chưa có ảnh
+                                        .product-badges
+                                            if item.discountPercentage > 0
+                                                span.product-sale -#{item.discountPercentage}%
+                                    .product-card-body
+                                        h3
+                                            a(href=`/products/detail/${item._id}`) #{item.title}
+                                        .product-price
+                                            span.price-new #{`${(Number(item.priceNew) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                            if item.discountPercentage > 0
+                                                span.price-old #{`${(Number(item.price) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                        a.product-detail-button(href=`/products/detail/${item._id}`) Xem chi tiết
+                    else
+                        .col-12
+                            .empty-state Chưa có sản phẩm liên quan.

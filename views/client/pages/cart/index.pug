@@ -1,0 +1,56 @@
+extends ../../layouts/default.pug
+
+block main
+    .cart-page
+        section.page-hero
+            .container
+                .page-intro
+                    span.section-kicker Shopping Bag
+                    h1.page-title Giỏ hàng
+                    p Kiểm tra sản phẩm trước khi thanh toán.
+
+        .container
+            if cart.products.length > 0
+                .cart-layout
+                    .cart-list
+                        each item in cart.products
+                            .cart-item-card
+                                .cart-product
+                                    if item.thumbnail
+                                        img(src=item.thumbnail alt=item.title)
+                                    else
+                                        .cart-product-placeholder
+                                    .cart-product-info
+                                        h3 #{item.title}
+                                        p Giá: #{`${(Number(item.priceNew) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                .cart-item-controls
+                                    form(action=`/cart/update/${item.productId}?_method=PATCH` method="POST")
+                                        label Số lượng
+                                        .cart-quantity-group
+                                            input.form-control.cart-quantity(type="number" name="quantity" value=item.quantity min="1")
+                                            button.btn.btn-outline-dark(type="submit") Cập nhật
+                                    .cart-line-total
+                                        span Thành tiền
+                                        strong #{`${(Number(item.total) || 0).toLocaleString("vi-VN")} VNĐ`}
+                                    form(action=`/cart/delete/${item.productId}?_method=DELETE` method="POST")
+                                        button.cart-remove(type="submit") Xóa
+
+                    aside.cart-summary
+                        h2 Tóm tắt đơn hàng
+                        .summary-row
+                            span Tạm tính
+                            strong #{`${(Number(cart.subTotal) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        .summary-row
+                            span Phí vận chuyển
+                            strong #{`${(Number(cart.shippingFee) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        .summary-total
+                            span Tổng cộng
+                            strong #{`${(Number(cart.total) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        a.btn.btn-dark.btn-block(href="/checkout") Thanh toán
+                        a.btn.btn-outline-dark.btn-block(href="/products") Tiếp tục mua sắm
+            else
+                .cart-empty
+                    .success-icon ◌
+                    h2 Giỏ hàng của bạn đang trống
+                    p Hãy chọn vài sản phẩm yêu thích rồi quay lại đây để thanh toán.
+                    a.btn.btn-dark(href="/products") Mua sắm ngay

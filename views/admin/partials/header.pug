@@ -1,7 +1,17 @@
-header.header
-  .container-fluid
-    .row.align-items-center
-      .col-3
-        .inner-logo
-          a(href="/admin/dashboard") ADMIN
-      .col-9
+header.admin-header
+    .admin-header-left
+        button.admin-menu-button(type="button" aria-label="Menu") ☰
+        form.admin-header-search(action=`${prefixAdmin}/products` method="GET")
+            span(aria-hidden="true") ⌕
+            input(type="text" name="keyword" placeholder="Tìm kiếm sản phẩm, đơn hàng, khách hàng...")
+    .admin-header-right
+        .admin-bell
+            span(aria-hidden="true") ♡
+            small 3
+        if admin
+            .admin-profile
+                .admin-avatar #{(admin.fullName || "A").slice(0, 1)}
+                .admin-profile-text
+                    strong #{admin.fullName || "Admin"}
+                    span Quản trị viên
+                a.admin-logout(href="/admin/auth/logout" title="Đăng xuất") ↗

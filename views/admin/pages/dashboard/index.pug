@@ -1,3 +1,73 @@
 extends ../../layouts/default.pug
+
 block main
-    h1 Trang tổng quan
+    .admin-page-head
+        div
+            span.admin-page-kicker Boutique Admin
+            h1.admin-page-title Tổng quan
+            p.admin-page-desc Chào mừng bạn trở lại, chúc bạn một ngày làm việc hiệu quả. ♥
+        .admin-date-pill Hôm nay
+
+    .admin-stat-grid
+        .admin-stat-card
+            .stat-icon ♡
+            span Tổng sản phẩm
+            strong #{stats.totalProducts}
+        .admin-stat-card
+            .stat-icon ▦
+            span Tổng danh mục
+            strong #{stats.totalCategories}
+        .admin-stat-card
+            .stat-icon ◇
+            span Tổng đơn hàng
+            strong #{stats.totalOrders}
+        .admin-stat-card
+            .stat-icon ₫
+            span Doanh thu
+            strong 0 VNĐ
+
+    .dashboard-grid
+        .admin-card.revenue-card
+            .admin-card-header
+                h2.admin-card-title Doanh thu 6 tháng gần đây
+                span.admin-chip Giả lập
+            .admin-card-body
+                .revenue-chart
+                    each item in [{month:"01",value:38,label:"12.000.000"},{month:"02",value:52,label:"18.500.000"},{month:"03",value:46,label:"15.200.000"},{month:"04",value:68,label:"24.000.000"},{month:"05",value:76,label:"28.500.000"},{month:"06",value:88,label:"34.000.000"}]
+                        .revenue-bar(style=`--height:${item.value}%`)
+                            span #{item.label}
+                            i
+                            small #{item.month}/2026
+        .admin-card.order-overview
+            .admin-card-header
+                h2.admin-card-title Tổng quan đơn hàng
+            .admin-card-body
+                .overview-row
+                    span Tất cả đơn hàng
+                    strong #{stats.totalOrders}
+                .overview-row.pending
+                    span Chờ xử lý
+                    strong #{stats.pendingOrders}
+                .overview-row
+                    span Đang giao
+                    strong 0
+                .overview-row
+                    span Hoàn thành
+                    strong 0
+                .overview-row.cancel
+                    span Đã hủy
+                    strong 0
+
+    .dashboard-bottom-grid
+        .admin-card
+            .admin-card-header
+                h2.admin-card-title Đơn hàng gần đây
+                a.section-link(href=`${prefixAdmin}/orders`) Xem tất cả
+            .admin-card-body
+                .soft-empty Đơn hàng mới sẽ hiển thị tại đây để bạn theo dõi nhanh.
+        .admin-card
+            .admin-card-header
+                h2.admin-card-title Sản phẩm mới nhập
+                a.section-link(href=`${prefixAdmin}/products`) Xem tất cả
+            .admin-card-body
+                .soft-empty Sản phẩm mới nhập sẽ được cập nhật khi có dữ liệu.

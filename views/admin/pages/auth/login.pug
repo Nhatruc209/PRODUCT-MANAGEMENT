@@ -1,0 +1,28 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        title #{pageTitle}
+        link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+        link(rel="stylesheet", href="/admin/css/auth.css")
+    body
+        .admin-auth-page
+            .admin-auth-card
+                img.admin-auth-logo(src="/images/logo.svg" alt="Sera")
+                span ADMIN
+                h1 Đăng nhập quản trị
+                if messages.error
+                    each message in messages.error
+                        .alert.alert-danger #{message}
+                if messages.success
+                    each message in messages.success
+                        .alert.alert-success #{message}
+                form(action="/admin/auth/login" method="POST")
+                    .form-group
+                        label(for="email") Email
+                        input#email.form-control(type="email" name="email" required)
+                    .form-group
+                        label(for="password") Mật khẩu
+                        input#password.form-control(type="password" name="password" required)
+                    button.btn.btn-dark.btn-block(type="submit") Đăng nhập

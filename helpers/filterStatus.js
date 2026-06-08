@@ -1,5 +1,5 @@
 module.exports = (query) => {
-    let filterStatus = [
+    const filterStatus = [
         {
             name: "Tất cả",
             status: "",
@@ -11,18 +11,21 @@ module.exports = (query) => {
             class: ""
         },
         {
-            name: "Dừng hoạt động", 
+            name: "Dừng hoạt động",
             status: "inactive",
             class: ""
         }
     ];
-    if(query.status){
+
+    if (query.status) {
         const index = filterStatus.findIndex(item => item.status === query.status);
-        filterStatus[index].class = "active";
+        if (index >= 0) {
+            filterStatus[index].class = "active";
+        }
     } else {
-        const index = filterStatus.findIndex(item => item.status ==="");
+        const index = filterStatus.findIndex(item => item.status === "");
         filterStatus[index].class = "active";
     }
 
     return filterStatus;
-}
+};

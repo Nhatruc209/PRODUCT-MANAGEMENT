@@ -1,16 +1,37 @@
+.top-notice
+    .container
+        span.topbar-icon(aria-hidden="true") ⇢
+        span Freeship cho đơn hàng từ 499K · Thanh toán COD toàn quốc
+
 header.header
     .container
-        .row.align-items-center
-            .col-3
-                .inner-logo
-                    a(href="/")
-                        img(src="/images/logo.svg", alt="Logo")
+        .header-inner
+            .inner-logo
+                a(href="/")
+                    img(src="/images/logo.svg", alt="Sera")
 
-            .col-9
-                .inner-menu
-                    ul
-                        li
-                            a(href="/") Trang chủ
+            nav.inner-menu
+                ul
+                    li
+                        a(href="/") Trang chủ
+                    li
+                        a(href="/products") Sản phẩm
+                    li
+                        a(href="/orders") Kiểm tra đơn hàng
 
-                        li
-                            a(href="/products") Sản phẩm
+            form.header-search(action="/products" method="GET")
+                input.form-control(type="text" name="keyword" placeholder="Tìm sản phẩm")
+                button(type="submit" aria-label="Tìm kiếm")
+                    span(aria-hidden="true") ⌕
+
+            .header-actions
+                a.header-action(href="/cart")
+                    span.action-icon(aria-hidden="true") ◌
+                    span Giỏ hàng
+                if user
+                    a.header-action(href="/user/logout")
+                        span.action-icon(aria-hidden="true") ↗
+                        span Đăng xuất
+                else
+                    a.header-action(href="/user/login") Đăng nhập
+                    a.header-register(href="/user/register") Đăng ký

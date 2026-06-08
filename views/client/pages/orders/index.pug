@@ -1,0 +1,57 @@
+extends ../../layouts/default.pug
+
+block main
+    .orders-page
+        section.page-hero
+            .container
+                .page-intro
+                    span.section-kicker Order Tracking
+                    h1.page-title Kiểm tra đơn hàng
+                    p Nhập số điện thoại hoặc mã đơn hàng để xem trạng thái xử lý.
+
+        .container
+            form.order-check-form(action="/orders/check" method="GET")
+                input.form-control(type="text" name="keyword" value=keyword placeholder="Số điện thoại hoặc mã đơn")
+                button.btn.btn-dark(type="submit") Kiểm tra
+
+            if keyword && orders.length === 0
+                .empty-state Không tìm thấy đơn hàng phù hợp.
+
+            if orders.length > 0
+                .orders-result-list
+                    each order in orders
+                        - const currentStep = statusSteps.find(step => step.value === order.status)
+                        .order-card
+                            .order-card-head
+                                div
+                                    span.section-kicker Đơn hàng
+                                    h2 Mã đơn: #{order._id}
+                                    p Ngày đặt: #{order.createdAt ? order.createdAt.toLocaleDateString("vi-VN") : ""}
+                                .order-total
+                                    span Tổng tiền
+                                    strong #{`${(Number(order.totalPrice) || 0).toLocaleString("vi-VN")} VNĐ`}
+                            .order-meta
+                                span Khách hàng: #{order.userInfo.fullName}
+                                span SĐT: #{order.userInfo.phone}
+                                span Trạng thái: #{currentStep ? currentStep.label : order.status}
+                            .order-products
+                                if order.products && order.products.length > 0
+                                    each item in order.products
+                                        - const itemPrice = Math.round((Number(item.price) || 0) * (100 - (Number(item.discountPercentage) || 0)) / 100)
+                                        - const itemTotal = itemPrice * (Number(item.quantity) || 1)
+                                        .order-product
+                                            if item.thumbnail
+                                                img(src=item.thumbnail alt=item.title)
+                                            else
+                                                .order-product-placeholder
+                                            .order-product-info
+                                                h3 #{item.title}
+                                                p Số lượng: #{item.quantity}
+                                            strong #{`${itemTotal.toLocaleString("vi-VN")} VNĐ`}
+                                else
+                                    .order-empty Chưa có sản phẩm trong đơn.
+                            .order-timeline
+                                each step in statusSteps
+                                    - const isActive = step.value === order.status
+                                    div(class=`timeline-step ${isActive ? "active" : ""}`)
+                                        span #{step.label}

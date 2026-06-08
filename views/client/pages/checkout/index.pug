@@ -1,0 +1,75 @@
+extends ../../layouts/default.pug
+
+block main
+    .checkout-page
+        section.page-hero
+            .container
+                .page-intro
+                    span.section-kicker Checkout
+                    h1.page-title Thanh toán
+                    p Điền thông tin nhận hàng và kiểm tra lại đơn trước khi đặt.
+
+        .container
+            if successMessage
+                .order-success-layout
+                    .order-success-card
+                        .success-icon ✓
+                        h2 Đặt hàng thành công
+                        p Cảm ơn bạn đã mua sắm tại Sera. Đơn hàng của bạn đang được xử lý.
+                        p.success-code #{successMessage}
+                        .success-actions
+                            a.btn.btn-dark(href="/products") Tiếp tục mua sắm
+                            a.btn.btn-outline-dark(href="/orders") Kiểm tra đơn hàng
+                    .checkout-summary.success-summary
+                        h2 Chi tiết đơn hàng
+                        p.checkout-empty Đơn hàng đã được ghi nhận. Bạn có thể dùng mã đơn hoặc số điện thoại để kiểm tra trạng thái.
+                        a.btn.btn-outline-dark.btn-block(href="/orders") Theo dõi đơn hàng
+            else
+                .checkout-layout
+                    .checkout-card
+                        h2 Thông tin nhận hàng
+                        form(action="/checkout/order" method="POST")
+                            .form-row
+                                .form-group.col-md-6
+                                    label(for="fullName") Họ tên
+                                    input#fullName.form-control(type="text" name="fullName" required)
+                                .form-group.col-md-6
+                                    label(for="phone") Số điện thoại
+                                    input#phone.form-control(type="text" name="phone" required)
+
+                            .form-group
+                                label(for="address") Địa chỉ
+                                input#address.form-control(type="text" name="address" required)
+
+                            .form-group
+                                label(for="note") Ghi chú
+                                textarea#note.form-control(name="note" rows="4")
+
+                            .payment-method
+                                h3 Phương thức thanh toán
+                                label.payment-option
+                                    input(type="radio" name="paymentMethod" value="cod" checked)
+                                    span Thanh toán khi nhận hàng (COD)
+
+                            button.btn.btn-dark.btn-lg(type="submit") Đặt hàng
+
+                    aside.checkout-summary
+                        h2 Chi tiết đơn hàng
+                        if order.products.length > 0
+                            each item in order.products
+                                .checkout-product
+                                    span #{item.title}
+                                    strong #{`${(Number(item.total) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        else
+                            .checkout-empty Chưa có sản phẩm trong giỏ.
+
+                        .summary-row
+                            span Tạm tính
+                            strong #{`${(Number(order.subTotal) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        .summary-row
+                            span Phí vận chuyển
+                            strong #{`${(Number(order.shippingFee) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        .summary-total
+                            span Tổng cộng
+                            strong #{`${(Number(order.total) || 0).toLocaleString("vi-VN")} VNĐ`}
+                        a.btn.btn-outline-dark.btn-block(href="/cart") Quay lại giỏ hàng

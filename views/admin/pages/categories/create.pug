@@ -1,0 +1,33 @@
+extends ../../layouts/default.pug
+
+block main
+    .admin-page-head
+        div
+            span.admin-page-kicker Category Studio
+            h1.admin-page-title Thêm danh mục
+            p.admin-page-desc Tạo danh mục mới cho bộ sưu tập Sera.
+        a.btn.admin-btn-soft(href=`${prefixAdmin}/categories`) Quay lại
+
+    .admin-form-card
+        form(action=`${prefixAdmin}/categories/create` method="POST")
+            .form-group
+                label(for="title") Tên danh mục
+                input#title.form-control(type="text" name="title" required)
+            .form-group
+                label(for="description") Mô tả
+                textarea#description.form-control(name="description" rows="4")
+            .form-group
+                label(for="thumbnail") Đường dẫn ảnh
+                input#thumbnail.form-control(type="text" name="thumbnail")
+            .form-row
+                .form-group.col-md-6
+                    label(for="status") Trạng thái
+                    select#status.form-control(name="status")
+                        option(value="active" selected) Hoạt động
+                        option(value="inactive") Dừng hoạt động
+                .form-group.col-md-6
+                    label(for="position") Vị trí
+                    input#position.form-control(type="number" name="position" min="1")
+            .admin-action-group
+                button.btn.admin-btn-primary(type="submit") Thêm mới
+                a.btn.admin-btn-soft(href=`${prefixAdmin}/categories`) Quay lại

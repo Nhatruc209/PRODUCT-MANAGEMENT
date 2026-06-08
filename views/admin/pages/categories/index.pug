@@ -1,0 +1,78 @@
+extends ../../layouts/default.pug
+include ../../mixins/filter-status.pug
+include ../../mixins/search.pug
+
+block main
+    .admin-page-head
+        div
+            span.admin-page-kicker Category Studio
+            h1.admin-page-title Danh mục sản phẩm
+            p.admin-page-desc Sắp xếp danh mục rõ ràng để quản lý bộ sưu tập dễ dàng hơn. ♥
+        a.btn.admin-btn-primary(href=`${prefixAdmin}/categories/create`) + Thêm danh mục
+
+    .admin-stat-grid.category-stat-grid
+        .admin-stat-card
+            .stat-icon ▦
+            span Tổng danh mục
+            strong #{categories.length}
+        .admin-stat-card
+            .stat-icon ◉
+            span Đang hiển thị
+            strong #{categories.filter(item => item.status === "active").length}
+        .admin-stat-card
+            .stat-icon ◌
+            span Đang ẩn
+            strong #{categories.filter(item => item.status !== "active").length}
+        .admin-stat-card
+            .stat-icon ↕
+            span Vị trí cao nhất
+            strong #{categories.length > 0 ? Math.max(...categories.map(item => Number(item.position) || 0)) : 0}
+
+    .admin-filter
+        .row.align-items-center
+            .col-12.col-lg-7.mb-3.mb-lg-0
+                +search(keyword)
+            .col-12.col-lg-5
+                +filter-status(filterStatus)
+
+    .admin-table-card
+        .admin-card-header
+            h2.admin-card-title Bảng danh mục
+        .table-responsive
+            table.table
+                thead
+                    tr
+                        th STT
+                        th Tên danh mục
+                        th Mô tả
+                        th Vị trí
+                        th Trạng thái
+                        th Ngày cập nhật
+                        th Hành động
+                tbody
+                    if categories.length > 0
+                        each item, index in categories
+                            tr
+                                td #{index + 1}
+                                td
+                                    .category-name-cell
+                                        span.category-icon ♡
+                                        strong #{item.title}
+                                td #{item.description || "Chưa có mô tả"}
+                                td #{item.position}
+                                td
+                                    if item.status === "active"
+                                        form(action=`${prefixAdmin}/categories/change-status/inactive/${item._id}?_method=PATCH` method="POST")
+                                            button.admin-badge.status-active(type="submit") Hiển thị
+                                    else
+                                        form(action=`${prefixAdmin}/categories/change-status/active/${item._id}?_method=PATCH` method="POST")
+                                            button.admin-badge.status-inactive(type="submit") Ẩn
+                                td #{item.updatedAt ? item.updatedAt.toLocaleDateString("vi-VN") : ""}
+                                td
+                                    .admin-action-group
+                                        a.admin-icon-btn(href=`${prefixAdmin}/categories/edit/${item._id}` title="Sửa") ✎
+                                        form.d-inline(action=`${prefixAdmin}/categories/delete/${item._id}?_method=DELETE` method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?')")
+                                            button.admin-icon-btn(type="submit" title="Xóa") ♡
+                    else
+                        tr
+                            td.text-center.text-muted(colspan="7") Không có danh mục

@@ -1,7 +1,33 @@
-.sider
-  .inner-menu
-    ul
-      li
-        a(href=`${prefixAdmin}/dashboard`) Tổng quan
-      li
-        a(href=`${prefixAdmin}/products`) Sản phẩm
+aside.sider
+    .sider-brand
+        a(href=`${prefixAdmin}/dashboard`)
+            img(src="/images/logo.svg" alt="Sera Admin")
+            span ADMIN
+    .inner-menu
+        ul
+            li
+                a(href=`${prefixAdmin}/dashboard`)
+                    span.menu-icon(aria-hidden="true") ⌂
+                    span Tổng quan
+            li
+                a(href=`${prefixAdmin}/products`)
+                    span.menu-icon(aria-hidden="true") ◇
+                    span Sản phẩm
+            li
+                a(href=`${prefixAdmin}/categories`)
+                    span.menu-icon(aria-hidden="true") ▦
+                    span Danh mục
+            li
+                a(href=`${prefixAdmin}/orders`)
+                    span.menu-icon(aria-hidden="true") ♧
+                    span Đơn hàng
+            li.menu-separator
+            li
+                a(href=`${prefixAdmin}/auth/logout`)
+                    span.menu-icon(aria-hidden="true") ↗
+                    span Đăng xuất
+    .sider-account
+        .admin-avatar A
+        div
+            strong Admin
+            span Quản trị viên
